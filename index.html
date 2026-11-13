@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>슬롯 무쌍</title>
+<style>
+html,body{margin:0;height:100%;background:#07060d;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#unity-canvas{position:fixed;inset:0;width:100%;height:100%;height:100dvh;display:block;background:#07060d}
+#loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#ffd23f;font:16px system-ui,sans-serif}
+#bar{width:min(260px,70vw);height:10px;background:#2a1a3a;box-shadow:0 0 0 2px #5a3a10}
+#fill{height:100%;width:0;background:#ffb020}
+#err{color:#ff9aa2;font-size:13px;max-width:80vw;text-align:center}
+</style>
+</head>
+<body>
+<canvas id="unity-canvas" tabindex="-1"></canvas>
+<div id="loading"><div>슬롯 무쌍 불러오는 중…</div><div id="bar"><div id="fill"></div></div><div id="err"></div></div>
+<script src="Build/WebGL-Sample.loader.js"></script>
+<script>
+  var canvas = document.getElementById('unity-canvas');
+  var config = {
+    dataUrl: "Build/WebGL-Sample.data.unityweb",
+    frameworkUrl: "Build/WebGL-Sample.framework.js.unityweb",
+    codeUrl: "Build/WebGL-Sample.wasm.unityweb",
+    streamingAssetsUrl: "StreamingAssets",
+    companyName: "SlotMusang",
+    productName: "슬롯 무쌍",
+    productVersion: "1.0",
+    matchWebGLToCanvasSize: true,
+    devicePixelRatio: Math.min(window.devicePixelRatio || 1, 3)
+  };
+  createUnityInstance(canvas, config, function (p) {
+    document.getElementById('fill').style.width = (p * 100) + '%';
+  }).then(function (inst) {
+    window.unityInstance = inst;
+    document.getElementById('loading').remove();
+    // 테스트용: ?demo=spin 등으로 장면 자동 재생
+    var demo = new URLSearchParams(location.search).get('demo');
+    if (demo) setTimeout(function () { inst.SendMessage('SlotMusang', 'DebugDemo', demo); }, 1500);
+  }).catch(function (e) {
+    document.getElementById('err').textContent = '실행 오류: ' + e;
+  });
+</script>
+</body>
+</html>
